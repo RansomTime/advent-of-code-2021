@@ -1,0 +1,281 @@
+mod inputs;
+use std::default::Default;
+use std::ops::Add;
+use std::ops::Sub;
+use std::convert::TryInto;
+
+
+fn main() {
+    println!("Part 1: {}", part_1(inputs::input()));
+
+}
+
+fn part_1(input: &str) -> u32 {
+
+    let mut lines: Vec<Line> = vec![];
+    for e in input.split('\n') {
+        lines.push(Line::new(e));
+    }
+
+    let mut grid = Grid::new(1000);
+
+    for line in lines {
+        grid.add_line(line);
+    }
+
+    let mut res = 0;
+    for x in 0..grid.size {
+        for y in 0..grid.size{
+            if grid.grid[x][y] > 1 {
+                res += 1;
+            }
+        }
+    }
+
+    res
+    
+}
+
+#[derive(Default, Debug)]
+struct Line {
+    p1: Point,
+    p2: Point,
+}
+
+#[derive(Default, Debug, Copy, Clone, PartialEq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+
+impl Point {
+    fn new(input: &str) -> Point {
+        let mut xy = input.split(',');
+        Point{ 
+            x: xy.next().unwrap().parse().unwrap(),
+            y: xy.next().unwrap().parse().unwrap(),
+        }
+    }
+
+    
+}
+
+impl Add for Point {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl Sub for Point {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y -other.y,
+        }
+    }
+}
+
+impl Line {
+    fn new(input: &str) -> Line {
+        let mut points = input.split(" -> ");
+        Line { 
+            p1: Point::new(points.next().unwrap()),
+            p2: Point::new(points.next().unwrap()),
+        }     
+    }
+
+    fn is_straight(&self) -> bool {
+        self.p1.x == self.p2.x || self.p1.y == self.p2.y
+    }
+
+    fn get_pts(&self) -> Vec<Point> {
+        let mut res = vec![];
+        if self.is_straight() {
+            let mut diff = self.p2 - self.p1;
+            //println!()
+            if diff.x == 0 {
+                if diff.y > 0 {
+                    diff.y = 1;
+                } else {
+                    diff.y = -1;
+                }
+            } else {
+                if diff.x > 0 {
+                    diff.x = 1;
+                } else {
+                    diff.x = -1;
+                }
+            }
+
+            let mut next: Point = self.p1.clone();
+            res.push(next.clone());
+            while next != self.p2 {
+                //println!("point: {}, {} | {}, {}", next.x, next.y, self.p2.x, self.p2.y);
+                next = next + diff;
+                res.push(next.clone())
+            }
+            res
+        } else {
+            res// not implemented
+        }
+    }
+}
+
+#[derive(Debug)]
+struct Grid {
+    grid: Vec<Vec<u8>>,
+    size: usize,
+}
+
+impl Grid {
+    fn new(size: usize) -> Grid {
+        let mut res: Vec<Vec<u8>> = Vec::with_capacity(size);
+        for _ in 0..size {
+            let mut inner: Vec<u8> = Vec::with_capacity(size);
+            for _ in 0..size {
+                inner.push(0);
+            }
+            res.push(inner);
+        }
+
+        Grid{
+            grid: res,
+            size: size
+        }
+
+    }
+
+    fn add_line(&mut self, line: Line) {
+        for point in line.get_pts() {
+            let x: usize = point.x.try_into().unwrap();
+            let y: usize = point.y.try_into().unwrap();
+            self.grid[x][y] += 1;
+        }
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::Line;
+    use crate::Point;
+    use crate::Grid;
+    use crate::inputs;
+    #[test]
+    fn default_test() {
+        assert_eq!(true, true);
+    }
+
+    #[test]
+    fn make_point() {
+        let test = "0,9";
+        let point = Point::new(test);
+
+        assert_eq!(point.x, 0);
+        assert_eq!(point.y, 9);
+    }
+
+    #[test]
+    fn make_line() {
+
+        let line = Line::new("0,9 -> 5,9");
+
+        assert_eq!(line.p1.x, 0);
+        assert_eq!(line.p1.y, 9);
+        assert_eq!(line.p2.x, 5);
+        assert_eq!(line.p2.y, 9);
+    }
+
+    #[test]
+    fn straight_lines() {
+        assert_eq!(Line::new("2,2 -> 2,1").is_straight(), true);
+        assert_eq!(Line::new("0,9 -> 5,9").is_straight(), true);
+        assert_eq!(Line::new("0,9 -> 2,9").is_straight(), true);
+        assert_eq!(Line::new("9,4 -> 3,4").is_straight(), true);
+        assert_eq!(Line::new("7,0 -> 7,4").is_straight(), true);
+        assert_eq!(Line::new("3,4 -> 1,4").is_straight(), true);
+    }
+
+    #[test]
+    fn not_straight_lines() {
+        assert_eq!(Line::new("8,0 -> 0,8").is_straight(), false);
+        assert_eq!(Line::new("6,4 -> 2,0").is_straight(), false);
+        assert_eq!(Line::new("0,0 -> 8,8").is_straight(), false);
+        assert_eq!(Line::new("5,5 -> 8,2").is_straight(), false);
+    }
+
+    #[test]
+    fn grid_initalise() {
+        assert_eq!(Grid::new(10).grid[0][0], 0);
+        assert_eq!(Grid::new(10).grid[9][9], 0);
+    }
+
+    #[test]
+    fn move_point_by_vector() {
+        assert_eq!(Point{x: 2, y: 1} + Point{x: 0, y: 1}, Point{x: 2, y: 2});
+    }
+
+    #[test]
+    fn points_on_line() {
+        let line = Line::new("2,2 -> 2,1");
+        assert_eq!(line.get_pts(), vec![Point{x: 2, y: 2}, Point{x: 2, y: 1}]);
+
+        let line_2 = Line::new("0,9 -> 5,9");
+        assert_eq!(line_2.get_pts(), vec![
+            Point{x: 0, y: 9},
+            Point{x: 1, y: 9},
+            Point{x: 2, y: 9},
+            Point{x: 3, y: 9},
+            Point{x: 4, y: 9},
+            Point{x: 5, y: 9},
+            ]);
+
+        let line_3 = Line::new("9,4 -> 3,4");
+        assert_eq!(line_3.get_pts(), vec![
+            Point{x: 9, y: 4},
+            Point{x: 8, y: 4},
+            Point{x: 7, y: 4},
+            Point{x: 6, y: 4},
+            Point{x: 5, y: 4},
+            Point{x: 4, y: 4},
+            Point{x: 3, y: 4},
+            ]);
+    }
+    #[test]
+    fn add_line_to_grid() {
+        let mut test_grid = Grid::new(10);
+        let line = Line::new("2,2 -> 2,1");
+
+        test_grid.add_line(line);
+        assert_eq!(test_grid.grid[2][2], 1);
+        assert_eq!(test_grid.grid[2][1], 1);
+    }
+
+    #[test]
+    fn add_overlapping_lines_to_grid() {
+        let mut test_grid = Grid::new(10);
+
+
+        test_grid.add_line(Line::new("0,9 -> 5,9"));
+        test_grid.add_line(Line::new("0,9 -> 2,9"));
+        assert_eq!(test_grid.grid[0][9], 2);
+        assert_eq!(test_grid.grid[1][9], 2);
+        assert_eq!(test_grid.grid[2][9], 2);
+        assert_eq!(test_grid.grid[3][9], 1);
+        assert_eq!(test_grid.grid[5][9], 1);
+        assert_eq!(test_grid.grid[9][9], 0);
+    }
+    #[test]
+    fn part_1_test() {
+        assert_eq!(crate::part_1(inputs::test()), 5);
+    }
+
+}
