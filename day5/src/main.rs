@@ -6,11 +6,11 @@ use std::convert::TryInto;
 
 
 fn main() {
-    println!("Part 2: {}", part_1(inputs::input()));
+    println!("Part 2: {}", part_2(inputs::input()));
 
 }
 
-fn part_1(input: &str) -> u32 {
+fn part_2(input: &str) -> u32 {
 
     let mut lines: Vec<Line> = vec![];
     for e in input.split('\n') {
@@ -287,7 +287,7 @@ mod tests {
     }
     #[test]
     fn part_1_test() {
-        assert_eq!(crate::part_1(inputs::test()), 12);
+        assert_eq!(crate::part_2(inputs::test()), 12);
     }
 
 }
