@@ -7,7 +7,6 @@ use std::convert::TryInto;
 
 fn main() {
     println!("Part 2: {}", part_2(inputs::input()));
-
 }
 
 fn part_2(input: &str) -> u32 {
@@ -92,7 +91,7 @@ impl Line {
         }     
     }
 
-    fn is_straight(&self) -> bool {
+    fn _is_straight(&self) -> bool {
         self.p1.x == self.p2.x || self.p1.y == self.p2.y
     }
 
@@ -113,12 +112,12 @@ impl Line {
             diff.y = -1;
         }
 
-        let mut next: Point = self.p1.clone();
-        res.push(next.clone());
+        let mut next: Point = self.p1;
+        res.push(next);
         while next != self.p2 {
             //println!("point: {}, {} | {}, {}", next.x, next.y, self.p2.x, self.p2.y);
             next = next + diff;
-            res.push(next.clone())
+            res.push(next)
         }
         res
     }
@@ -143,7 +142,7 @@ impl Grid {
 
         Grid{
             grid: res,
-            size: size
+            size
         }
 
     }
@@ -191,20 +190,20 @@ mod tests {
 
     #[test]
     fn straight_lines() {
-        assert_eq!(Line::new("2,2 -> 2,1").is_straight(), true);
-        assert_eq!(Line::new("0,9 -> 5,9").is_straight(), true);
-        assert_eq!(Line::new("0,9 -> 2,9").is_straight(), true);
-        assert_eq!(Line::new("9,4 -> 3,4").is_straight(), true);
-        assert_eq!(Line::new("7,0 -> 7,4").is_straight(), true);
-        assert_eq!(Line::new("3,4 -> 1,4").is_straight(), true);
+        assert_eq!(Line::new("2,2 -> 2,1")._is_straight(), true);
+        assert_eq!(Line::new("0,9 -> 5,9")._is_straight(), true);
+        assert_eq!(Line::new("0,9 -> 2,9")._is_straight(), true);
+        assert_eq!(Line::new("9,4 -> 3,4")._is_straight(), true);
+        assert_eq!(Line::new("7,0 -> 7,4")._is_straight(), true);
+        assert_eq!(Line::new("3,4 -> 1,4")._is_straight(), true);
     }
 
     #[test]
     fn not_straight_lines() {
-        assert_eq!(Line::new("8,0 -> 0,8").is_straight(), false);
-        assert_eq!(Line::new("6,4 -> 2,0").is_straight(), false);
-        assert_eq!(Line::new("0,0 -> 8,8").is_straight(), false);
-        assert_eq!(Line::new("5,5 -> 8,2").is_straight(), false);
+        assert_eq!(Line::new("8,0 -> 0,8")._is_straight(), false);
+        assert_eq!(Line::new("6,4 -> 2,0")._is_straight(), false);
+        assert_eq!(Line::new("0,0 -> 8,8")._is_straight(), false);
+        assert_eq!(Line::new("5,5 -> 8,2")._is_straight(), false);
     }
 
     #[test]
