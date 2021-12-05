@@ -1,5 +1,4 @@
 mod inputs;
-use std::default::Default;
 use std::ops::Add;
 use std::ops::Sub;
 use std::convert::TryInto;
@@ -35,13 +34,13 @@ fn part_2(input: &str) -> u32 {
     
 }
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 struct Line {
     p1: Point,
     p2: Point,
 }
 
-#[derive(Default, Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 struct Point {
     x: i32,
     y: i32,
@@ -98,7 +97,7 @@ impl Line {
     fn get_pts(&self) -> Vec<Point> {
         let mut res = vec![];
         let mut diff = self.p2 - self.p1;
-        //println!()
+
         if diff.x >= 1 {
             diff.x = 1;
         }
@@ -115,7 +114,6 @@ impl Line {
         let mut next: Point = self.p1;
         res.push(next);
         while next != self.p2 {
-            //println!("point: {}, {} | {}, {}", next.x, next.y, self.p2.x, self.p2.y);
             next = next + diff;
             res.push(next)
         }
@@ -285,7 +283,7 @@ mod tests {
         assert_eq!(test_grid.grid[9][9], 0);
     }
     #[test]
-    fn part_1_test() {
+    fn part_2_test() {
         assert_eq!(crate::part_2(inputs::test()), 12);
     }
 
