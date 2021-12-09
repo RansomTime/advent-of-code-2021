@@ -70,7 +70,7 @@ impl HeightMap {
     fn _pretty_print(&self)  {
         for x in 0..self.height {
             for y in 0..self.width {
-                if &self.map[x][y] == &9 {
+                if self.map[x][y] == 9 {
                     print!("w");
                 } else {
                     match self._get_basin_num(Coord { x, y }) {
@@ -80,7 +80,7 @@ impl HeightMap {
                     }
                 }
             }
-            print!("\n");
+            println!();
         }
             
     }
@@ -95,7 +95,7 @@ impl HeightMap {
     }
 
     fn fill_basins(&mut self) { 
-        assert_eq!(self.basins.is_empty(), true);
+        assert!(self.basins.is_empty());
         for x in 0..self.height {
             for y in 0..self.width {
                 if self.is_low_point(x,y) {
@@ -114,9 +114,6 @@ impl HeightMap {
                 }
             }
         }
-
-        return
-
     }
     
 
