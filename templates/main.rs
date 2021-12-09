@@ -20,6 +20,6 @@ mod test {
 
     #[test]
     fn dummy_test() {
-        assert_eq!(inputs::test, "");
+        assert_eq!(inputs::test(), "");
     }
 }
