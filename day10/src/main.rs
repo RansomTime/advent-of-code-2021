@@ -14,7 +14,7 @@ fn part_1() -> i32 {
 
 }
 
-fn part_2() -> i128 {
+fn part_2() -> i64 {
     let mut scores = vec![];
     for line in inputs::input().lines() {
         match get_line_score(line) {
@@ -101,8 +101,8 @@ fn complete_string(string: &str) -> Vec<char> {
     }
 }
 
-fn get_line_score(line: &str) -> i128 {
-    fn invalid_symbol_score(symbol: char) -> i128 {
+fn get_line_score(line: &str) -> i64 {
+    fn invalid_symbol_score(symbol: char) -> i64 {
         match symbol {
             ')' => 1,
             ']' => 2,
